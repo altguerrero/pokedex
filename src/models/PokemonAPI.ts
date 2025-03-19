@@ -10,6 +10,6 @@ export interface PokemonAPI {
   name: string
   weight: number
   height: number
-  sprites: { front_default: string }
+  sprites: { front_default: string; other: { 'official-artwork': { front_default: string } } }
   types: { slot: number; type: { name: string } }[]
 }

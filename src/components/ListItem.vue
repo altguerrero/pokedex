@@ -1,9 +1,12 @@
 <template>
   <div
-    class="flex items-center justify-between pl-[1.25rem] pr-[0.625rem] py-[0.5rem] rounded-lg bg-white shadow-sm transition"
+    class="flex items-center justify-between pl-[1.25rem] pr-[0.625rem] py-[0.5rem] rounded-lg bg-white hover:opacity-75 shadow-sm hover:shadow-md transition cursor-pointer"
+    @click="emit('open')"
   >
     <span class="text-[1.375rem] font-semibold">{{ name }}</span>
-    <FavoriteButton :isActive="isFavorite" @toggle="emitToggle" />
+    <div @click.stop>
+      <FavoriteButton :isActive="isFavorite" @toggle="emit('toggle')" />
+    </div>
   </div>
 </template>
 
@@ -17,9 +20,5 @@ interface Props {
 }
 
 defineProps<Props>()
-const emit = defineEmits(['toggle'])
-
-const emitToggle = () => {
-  emit('toggle')
-}
+const emit = defineEmits(['toggle', 'open'])
 </script>

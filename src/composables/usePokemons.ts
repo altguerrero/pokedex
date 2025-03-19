@@ -1,8 +1,11 @@
 import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
 import { getPokemons, getPokemonByName } from '@/services/pokemon.service'
 import type { PokemonListItem } from '@/models/Pokemon'
+import { useFavoritesStore } from '@/stores/favorites'
 
 export function usePokemons() {
+  const favoritesStore = useFavoritesStore()
+
   const pokemons = ref<PokemonListItem[]>([])
   const offset = ref(0)
   const limit = 20
@@ -19,7 +22,12 @@ export function usePokemons() {
     isLoading.value = true
     try {
       const newPokemons = await getPokemons(offset.value, limit)
-      pokemons.value.push(...newPokemons.map((p) => ({ ...p, favorite: false })))
+      pokemons.value.push(
+        ...newPokemons.map((p) => ({
+          ...p,
+          favorite: favoritesStore.isFavorite(p.id),
+        })),
+      )
       offset.value += limit
     } finally {
       isLoading.value = false
@@ -71,7 +79,10 @@ export function usePokemons() {
       }
       try {
         const result = await getPokemonByName(value.trim().toLowerCase())
-        searchResult.value = result
+        searchResult.value = {
+          ...result,
+          favorite: favoritesStore.isFavorite(result.id),
+        }
       } catch {
         searchResult.value = null
       } finally {

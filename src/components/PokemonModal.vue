@@ -9,35 +9,35 @@
       </div>
 
       <PokemonCard
-        :name="name"
-        :image="image"
-        :weight="weight"
-        :height="height"
-        :types="types"
-        :isFavorite="isFavorite"
+        :name="pokemon.name"
+        :image="pokemon.image"
+        :weight="pokemon.weight"
+        :height="pokemon.height"
+        :types="pokemon.types"
+        :isFavorite="store.isFavorite(pokemon.id)"
+        @toggle="emit('toggle')"
       />
     </DialogContent>
   </Dialog>
 </template>
 
 <script setup lang="ts">
+import type { Pokemon } from '@/models/Pokemon'
 import { defineProps, defineEmits } from 'vue'
 
 import IconClose from './icons/IconClose.vue'
 import PokemonCard from './PokemonCard.vue'
 import Dialog from './ui/dialog/UiDialog.vue'
 import DialogContent from './ui/dialog/DialogContent.vue'
+import { useFavoritesStore } from '@/stores/favorites'
+
+const store = useFavoritesStore()
 
 interface Props {
   open: boolean
-  name: string
-  image: string
-  weight: string
-  height: string
-  types: string
-  isFavorite: boolean
+  pokemon: Pokemon
 }
 
 defineProps<Props>()
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'toggle'])
 </script>

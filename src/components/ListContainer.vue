@@ -4,34 +4,50 @@
       v-for="pokemon in pokemons || []"
       :key="pokemon.id"
       :name="pokemon.name"
-      :isFavorite="pokemon.favorite"
-      @toggle="toggleFavorite(pokemon.id)"
+      :isFavorite="store.isFavorite(pokemon.id)"
+      @toggle="toggleFavorite(pokemon)"
+      @open="openModal(pokemon.id)"
+    />
+
+    <PokemonModal
+      v-if="selectedPokemon"
+      :open="modalOpen"
+      :pokemon="selectedPokemon"
+      @close="closeModal"
+      @toggle="toggleFavorite(selectedPokemon)"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue'
-import type { PokemonListItem } from '@/models/Pokemon'
+import { ref } from 'vue'
+import type { PokemonListItem, Pokemon } from '@/models/Pokemon'
 import ListItem from './ListItem.vue'
+import PokemonModal from './PokemonModal.vue'
+import { getPokemonById } from '@/services/pokemon.service'
+import { useFavoritesStore } from '@/stores/favorites'
 
-const props = defineProps<{
+defineProps<{
   pokemons: PokemonListItem[]
 }>()
 
-const toggleFavorite = (id: number) => {
-  const pokemon = props.pokemons.find((p) => p.id === id)
-  if (pokemon) {
-    pokemon.favorite = !pokemon.favorite
-  }
+const store = useFavoritesStore()
+
+const modalOpen = ref(false)
+const selectedPokemon = ref<Pokemon | null>(null)
+
+const toggleFavorite = (pokemon: PokemonListItem) => {
+  store.toggleFavorite(pokemon)
 }
 
-watch(
-  () => props.pokemons.map((p) => ({ id: p.id, favorite: p.favorite })),
-  (newVal) => {
-    const favorites = newVal.filter((p) => p.favorite).map((p) => p.id)
-    localStorage.setItem('favorites', JSON.stringify(favorites))
-  },
-  { deep: true },
-)
+const openModal = async (id: number) => {
+  const pokemonDetail = await getPokemonById(id)
+  selectedPokemon.value = pokemonDetail
+  modalOpen.value = true
+}
+
+const closeModal = () => {
+  modalOpen.value = false
+  selectedPokemon.value = null
+}
 </script>

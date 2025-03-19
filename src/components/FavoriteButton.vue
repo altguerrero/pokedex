@@ -1,6 +1,6 @@
 <template>
   <Button
-    @click="toggle"
+    @click="emit('toggle')"
     variant="outline"
     size="icon"
     :class="[
@@ -15,13 +15,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { defineProps, defineEmits } from 'vue'
 import IconStar from './icons/IconStar.vue'
 import { Button } from './ui/button'
 
-const isActive = ref(false)
-
-const toggle = () => {
-  isActive.value = !isActive.value
-}
+defineProps<{ isActive: boolean }>()
+const emit = defineEmits(['toggle'])
 </script>

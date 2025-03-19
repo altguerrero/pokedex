@@ -4,7 +4,7 @@ export interface Pokemon {
   image: string
   weight: number
   height: number
-  types: string[]
+  types: string
   favorite: boolean
 }
 
