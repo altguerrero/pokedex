@@ -2,18 +2,21 @@
 import SearchInput from '@/components/SearchInput.vue'
 import ListContainer from '@/components/ListContainer.vue'
 import SegmentedToggle from '@/components/SegmentedToggle.vue'
-import type { PokemonListItem } from '@/models/Pokemon'
 import NotFound from './NotFound.vue'
+import type { PokemonListItem } from '@/models/Pokemon'
 
 const props = withDefaults(
   defineProps<{
     items: PokemonListItem[]
     search: string
-    isLoadingSearch: boolean
-    notFound: boolean
+    isLoadingSearch?: boolean
+    notFound?: boolean
+    target?: HTMLElement | null
   }>(),
   {
     items: () => [],
+    isLoadingSearch: false,
+    notFound: false,
   },
 )
 
@@ -30,7 +33,7 @@ const emit = defineEmits(['update:search'])
       :isLoading="props.isLoadingSearch"
     />
 
-    <NotFound v-if="props.notFound && !isLoadingSearch" @reset="emit('update:search', '')" />
+    <NotFound v-if="props.notFound && !props.isLoadingSearch" @reset="emit('update:search', '')" />
 
     <ListContainer :pokemons="props.items" />
 

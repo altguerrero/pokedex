@@ -27,7 +27,7 @@ watch(isLoading, (loading) => {
 
 <template>
   <transition name="fade-scale">
-    <div v-if="isVisible" class="fixed inset-0 z-50 flex items-center justify-center bg-white">
+    <div v-if="isVisible" class="fixed inset-0 z-50 flex items-center justify-center bg-background">
       <PokeballLoader />
     </div>
   </transition>
@@ -40,5 +40,5 @@ watch(isLoading, (loading) => {
     :notFound="notFound"
   />
 
-  <div v-if="!isVisible" ref="target" class="h-[1px]"></div>
+  <div ref="target" class="h-[1px]"></div>
 </template>
