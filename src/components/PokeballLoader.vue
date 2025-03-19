@@ -1,0 +1,51 @@
+<script setup lang="ts">
+import IconLoader from './icons/IconLoader.vue'
+</script>
+
+<template>
+  <div class="relative flex items-center justify-center w-[6.625rem] h-[6.625rem]">
+    <IconLoader class="animate-pokeball" />
+    <span
+      class="absolute w-[25px] h-[25px] bg-red-600 rounded-full animate-blink border-2 border-white"
+    ></span>
+  </div>
+</template>
+
+<style scoped>
+@keyframes pokeball {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(15deg);
+  }
+  50% {
+    transform: rotate(-15deg);
+  }
+  75% {
+    transform: rotate(15deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.animate-pokeball {
+  animation: pokeball 1.2s infinite ease-in-out;
+  transform-origin: center;
+}
+
+.animate-blink {
+  animation: blink 1s infinite;
+}
+</style>
