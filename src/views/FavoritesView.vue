@@ -1,3 +1,3 @@
 <template>
-  <router-view />
+  <h1>Favorites</h1>
 </template>
