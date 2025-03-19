@@ -1,5 +1,7 @@
 <template>
-  <div class="container mx-auto h-screen flex flex-col justify-center items-center px-[1.875rem]">
+  <section
+    class="container mx-auto h-screen flex flex-col justify-center items-center px-[1.875rem]"
+  >
     <figure class="flex justify-center mb-[3.75rem]">
       <img :src="image" alt="Welcome" />
     </figure>
@@ -13,11 +15,11 @@
         Pokémon world.
       </p>
 
-      <router-link to="/favorites">
+      <router-link to="/pokemons">
         <Button class="mt-[3.125rem]">Get started</Button>
       </router-link>
     </div>
-  </div>
+  </section>
 </template>
 
 <script setup lang="ts">

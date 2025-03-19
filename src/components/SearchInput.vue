@@ -1,28 +1,28 @@
 <template>
   <div
-    class="flex items-center gap-[0.625rem] rounded-lg bg-white px-[0.9375rem] py-[0.8125rem] shadow-custom-search"
+    class="relative flex items-center gap-[0.625rem] rounded-lg bg-white px-[0.9375rem] py-[0.8125rem] shadow-custom-search"
   >
     <IconSearch class="w-[1.125rem] h-[1.125rem] text-content-disabled" />
     <input
       type="text"
-      v-model="search"
+      :value="modelValue"
+      @input="emit('update:modelValue', ($event.target as HTMLInputElement)?.value || '')"
       class="flex-1 outline-none bg-transparent text-base font-semibold placeholder-content-disabled text-content-primary"
       placeholder="Search"
-      @input="onInput"
     />
+
+    <div v-if="isLoading" class="absolute right-0 translate-x-7">
+      <PokeballLoader size="small" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, defineEmits } from 'vue'
 import IconSearch from './icons/IconSearch.vue'
+import PokeballLoader from './PokeballLoader.vue'
 
-const emit = defineEmits<{
-  (event: 'search', value: string): void
-}>()
-
-const search = ref('')
-const onInput = () => emit('search', search.value)
+const emit = defineEmits(['update:modelValue'])
+defineProps<{ modelValue: string; isLoading?: boolean }>()
 </script>
 
 <style scoped>

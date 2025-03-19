@@ -1,15 +1,18 @@
-<script setup lang="ts">
-import IconLoader from './icons/IconLoader.vue'
-</script>
-
 <template>
-  <div class="relative flex items-center justify-center w-[6.625rem] h-[6.625rem]">
-    <IconLoader class="animate-pokeball" />
-    <span
-      class="absolute w-[25px] h-[25px] bg-red-600 rounded-full animate-blink border-2 border-white"
-    ></span>
+  <div class="relative flex items-center justify-center">
+    <div :class="[size === 'small' ? 'scale-[0.2]' : 'scale-100']">
+      <IconLoader class="animate-pokeball" />
+      <span
+        class="absolute inset-0 mx-auto my-auto w-[25px] h-[25px] bg-red-600 rounded-full animate-blink border-2 border-white"
+      ></span>
+    </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import IconLoader from './icons/IconLoader.vue'
+defineProps<{ size?: 'small' | 'default' }>()
+</script>
 
 <style scoped>
 @keyframes pokeball {
