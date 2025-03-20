@@ -1,3 +1,36 @@
+<script setup lang="ts">
+import background from '@/assets/images/background-cover.png'
+import FavoriteButton from './FavoriteButton.vue'
+import { Button } from './ui/button'
+import { defineProps, defineEmits } from 'vue'
+import { useToast } from '@/components/ui/toast/use-toast'
+
+interface Props {
+  name: string
+  image: string
+  weight: number
+  height: number
+  types: string
+  isFavorite: boolean
+}
+
+const props = defineProps<Props>()
+
+const { toast } = useToast()
+
+const shareInfo = () => {
+  const text = `Name: ${props.name}, Weight: ${props.weight}, Height: ${props.height}, Types: ${props.types.split(', ').join(' - ')}`
+  navigator.clipboard.writeText(text)
+  toast({
+    title: 'Copied!',
+    description: 'The Pokémon info has been copied to clipboard.',
+    class: 'bg-green-100 border border-green-400 text-green-800',
+  })
+}
+
+const emit = defineEmits(['toggle'])
+</script>
+
 <template>
   <div class="rounded-[0.3125rem] overflow-hidden bg-white w-full">
     <div
@@ -29,27 +62,8 @@
     </div>
 
     <div class="py-[1.25rem] px-[1.875rem] flex items-center justify-between gap-4">
-      <Button>Share to my friends</Button>
+      <Button @click="shareInfo">Share to my friends</Button>
       <FavoriteButton :isActive="isFavorite" @toggle="emit('toggle')" />
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import background from '@/assets/images/background-cover.png'
-import FavoriteButton from './FavoriteButton.vue'
-import { Button } from './ui/button'
-import { defineProps, defineEmits } from 'vue'
-
-interface Props {
-  name: string
-  image: string
-  weight: number
-  height: number
-  types: string
-  isFavorite: boolean
-}
-
-defineProps<Props>()
-const emit = defineEmits(['toggle'])
-</script>
