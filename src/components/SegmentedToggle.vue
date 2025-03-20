@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { BottomBar } from './ui/bottomBar'
-import { Button } from './ui/button'
+import { BottomBar } from '@/components/ui/bottomBar'
+import { Button } from '@/components/ui/button'
 
-import IconList from './icons/IconList.vue'
-import IconStar from './icons/IconStar.vue'
+import IconList from '@/components/icons/IconList.vue'
+import IconStar from '@/components/icons/IconStar.vue'
 
 import { useRoute, useRouter } from 'vue-router'
 

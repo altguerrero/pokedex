@@ -1,3 +1,11 @@
+<script setup lang="ts">
+import IconSearch from '@/components/icons/IconSearch.vue'
+import PokeballLoader from '@/components/PokeballLoader.vue'
+
+const emit = defineEmits(['update:modelValue'])
+defineProps<{ modelValue: string; isLoading?: boolean }>()
+</script>
+
 <template>
   <div
     class="relative flex items-center gap-[0.625rem] rounded-lg bg-white px-[0.9375rem] py-[0.8125rem] shadow-custom-search"
@@ -16,14 +24,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import IconSearch from './icons/IconSearch.vue'
-import PokeballLoader from './PokeballLoader.vue'
-
-const emit = defineEmits(['update:modelValue'])
-defineProps<{ modelValue: string; isLoading?: boolean }>()
-</script>
 
 <style scoped>
 .shadow-custom-search {

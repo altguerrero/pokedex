@@ -1,3 +1,35 @@
+<script setup lang="ts">
+import type { PokemonListItem } from '@/models/Pokemon'
+import { ref } from 'vue'
+import ListItem from './ListItem.vue'
+import PokemonModal from './PokemonModal.vue'
+import { useFavoritesStore } from '@/stores/favorites'
+import { usePokemonDetail } from '@/composables/usePokemonDetail'
+
+defineProps<{
+  pokemons: PokemonListItem[]
+}>()
+
+const store = useFavoritesStore()
+
+const modalOpen = ref(false)
+const { pokemon, fetchPokemon, reset } = usePokemonDetail()
+
+const toggleFavorite = (pokemon: PokemonListItem) => {
+  store.toggleFavorite(pokemon)
+}
+
+const openModal = async (id: number) => {
+  await fetchPokemon(id)
+  modalOpen.value = true
+}
+
+const closeModal = () => {
+  modalOpen.value = false
+  reset()
+}
+</script>
+
 <template>
   <div class="flex flex-col gap-[0.625rem]">
     <ListItem
@@ -10,44 +42,11 @@
     />
 
     <PokemonModal
-      v-if="selectedPokemon"
+      v-if="pokemon"
       :open="modalOpen"
-      :pokemon="selectedPokemon"
+      :pokemon="pokemon"
       @close="closeModal"
-      @toggle="toggleFavorite(selectedPokemon)"
+      @toggle="toggleFavorite(pokemon)"
     />
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-import type { PokemonListItem, Pokemon } from '@/models/Pokemon'
-import ListItem from './ListItem.vue'
-import PokemonModal from './PokemonModal.vue'
-import { getPokemonById } from '@/services/pokemon.service'
-import { useFavoritesStore } from '@/stores/favorites'
-
-defineProps<{
-  pokemons: PokemonListItem[]
-}>()
-
-const store = useFavoritesStore()
-
-const modalOpen = ref(false)
-const selectedPokemon = ref<Pokemon | null>(null)
-
-const toggleFavorite = (pokemon: PokemonListItem) => {
-  store.toggleFavorite(pokemon)
-}
-
-const openModal = async (id: number) => {
-  const pokemonDetail = await getPokemonById(id)
-  selectedPokemon.value = pokemonDetail
-  modalOpen.value = true
-}
-
-const closeModal = () => {
-  modalOpen.value = false
-  selectedPokemon.value = null
-}
-</script>

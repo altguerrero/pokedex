@@ -1,3 +1,12 @@
+<script setup lang="ts">
+import { defineProps, defineEmits } from 'vue'
+import IconStar from './icons/IconStar.vue'
+import { Button } from './ui/button'
+
+defineProps<{ isActive: boolean }>()
+const emit = defineEmits(['toggle'])
+</script>
+
 <template>
   <Button
     @click="emit('toggle')"
@@ -13,12 +22,3 @@
     <IconStar />
   </Button>
 </template>
-
-<script setup lang="ts">
-import { defineProps, defineEmits } from 'vue'
-import IconStar from './icons/IconStar.vue'
-import { Button } from './ui/button'
-
-defineProps<{ isActive: boolean }>()
-const emit = defineEmits(['toggle'])
-</script>
