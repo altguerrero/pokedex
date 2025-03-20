@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
 import { cn } from '@/lib/utils'
 import { ToastRoot, type ToastRootEmits, useForwardPropsEmits } from 'reka-ui'
@@ -9,6 +10,7 @@ const props = defineProps<ToastProps>()
 const emits = defineEmits<ToastRootEmits>()
 
 const delegatedProps = computed(() => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { class: _, ...delegated } = props
 
   return delegated
