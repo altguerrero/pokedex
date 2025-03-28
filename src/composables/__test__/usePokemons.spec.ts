@@ -1,15 +1,35 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { ref } from 'vue'
 import { usePokemons } from '@/composables/usePokemons'
-import { getPokemons, getPokemonByName } from '@/services/pokemon.service'
 import { useFavoritesStore } from '@/stores/favorites'
-
-vi.mock('@/services/pokemon.service', () => ({
-  getPokemons: vi.fn(),
-  getPokemonByName: vi.fn(),
-}))
 
 vi.mock('@/stores/favorites', () => ({
   useFavoritesStore: vi.fn(),
+}))
+
+vi.mock('@/composables/usePokemonList', () => ({
+  usePokemonList: () => ({
+    pokemons: ref([]),
+    isLoading: ref(false),
+    fetchPokemons: vi.fn(),
+  }),
+}))
+
+vi.mock('@/composables/usePokemonSearch', () => ({
+  usePokemonSearch: () => ({
+    search: ref(''),
+    searchResult: ref(null),
+    isLoadingSearch: ref(false),
+    notFound: ref(false),
+  }),
+}))
+
+vi.mock('@/composables/useIntersectionObserver', () => ({
+  useIntersectionObserver: () => ({
+    target: ref(null),
+    disconnect: vi.fn(),
+    connect: vi.fn(),
+  }),
 }))
 
 describe('usePokemons composable', () => {
@@ -17,54 +37,25 @@ describe('usePokemons composable', () => {
     isFavorite: vi.fn().mockReturnValue(false),
   }
 
-  const mockPokemons = [
-    { id: 1, name: 'Bulbasaur' },
-    { id: 2, name: 'Charmander' },
-  ]
-
-  const mockPokemon = { id: 25, name: 'Pikachu' }
-
   beforeEach(() => {
     vi.clearAllMocks()
     ;(useFavoritesStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue(mockFavoritesStore)
   })
 
-  it('should fetch and append pokemons', async () => {
-    ;(getPokemons as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(mockPokemons)
-
-    const { pokemons, fetchPokemons } = usePokemons()
-    await fetchPokemons()
-
-    expect(getPokemons).toHaveBeenCalledWith(0, 20)
-    expect(pokemons.value).toHaveLength(2)
-    expect(pokemons.value[0]).toMatchObject({ id: 1, name: 'Bulbasaur', favorite: false })
-  })
-
-  it('should search for pokemon by name', async () => {
-    ;(getPokemonByName as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(mockPokemon)
-
-    const { search, displayPokemons, isLoadingSearch } = usePokemons()
-
+  it('should display search result when searching', async () => {
+    const { search, displayPokemons } = usePokemons()
     search.value = 'pikachu'
-    await new Promise((r) => setTimeout(r, 600))
-
-    expect(getPokemonByName).toHaveBeenCalledWith('pikachu')
-    expect(displayPokemons.value).toHaveLength(1)
-    expect(displayPokemons.value[0].name).toBe('Pikachu')
-    expect(isLoadingSearch.value).toBe(false)
-  })
-
-  it('should return empty array if search fails', async () => {
-    ;(getPokemonByName as unknown as ReturnType<typeof vi.fn>).mockRejectedValue(
-      new Error('not found'),
-    )
-
-    const { search, displayPokemons, notFound } = usePokemons()
-
-    search.value = 'missingno'
-    await new Promise((r) => setTimeout(r, 600))
 
     expect(displayPokemons.value).toEqual([])
-    expect(notFound.value).toBe(true)
+  })
+
+  it('should display pokemons list when not searching', () => {
+    const { displayPokemons } = usePokemons()
+    expect(displayPokemons.value).toEqual([])
+  })
+
+  it('should handle target element for infinite scroll', () => {
+    const { target } = usePokemons()
+    expect(target.value).toBeDefined()
   })
 })

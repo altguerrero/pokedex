@@ -1,94 +1,19 @@
-import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
-import { getPokemons, getPokemonByName } from '@/services/pokemon.service'
-import type { PokemonListItem } from '@/models/Pokemon'
-import { useFavoritesStore } from '@/stores/favorites'
+import { computed, watch } from 'vue'
+import { usePokemonList } from './usePokemonList'
+import { usePokemonSearch } from './usePokemonSearch'
+import { useIntersectionObserver } from './useIntersectionObserver'
 
 export function usePokemons() {
-  const favoritesStore = useFavoritesStore()
-
-  const pokemons = ref<PokemonListItem[]>([])
-  const offset = ref(0)
-  const limit = 20
-  const isLoading = ref(false)
-  const search = ref('')
-  const searchResult = ref<PokemonListItem | null>(null)
-  const isLoadingSearch = ref(false)
-
-  const target = ref<HTMLElement | null>(null)
-  let observer: IntersectionObserver | null = null
-
-  const fetchPokemons = async () => {
-    if (isLoading.value) return
-    isLoading.value = true
-    try {
-      const newPokemons = await getPokemons(offset.value, limit)
-      pokemons.value.push(
-        ...newPokemons.map((p) => ({
-          ...p,
-          favorite: favoritesStore.isFavorite(p.id),
-        })),
-      )
-      offset.value += limit
-    } finally {
-      isLoading.value = false
-    }
-  }
-
-  const initObserver = () => {
-    if (observer) observer.disconnect()
-
-    observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && search.value.trim() === '') {
-          fetchPokemons()
-        }
-      },
-      { threshold: 1 },
-    )
-
-    if (target.value) observer.observe(target.value)
-  }
-
-  onMounted(() => {
-    initObserver()
-  })
-
-  onUnmounted(() => {
-    if (observer) observer.disconnect()
-  })
+  const { pokemons, isLoading, fetchPokemons } = usePokemonList()
+  const { search, searchResult, isLoadingSearch, notFound } = usePokemonSearch()
+  const { target, disconnect, connect } = useIntersectionObserver(fetchPokemons)
 
   watch(search, (value) => {
-    if (observer) {
-      if (value.trim() === '') {
-        observer.observe(target.value!)
-      } else {
-        observer.disconnect()
-      }
+    if (value.trim() === '') {
+      connect()
+    } else {
+      disconnect()
     }
-  })
-
-  let debounceTimeout: ReturnType<typeof setTimeout>
-  watch(search, (value) => {
-    isLoadingSearch.value = true
-    clearTimeout(debounceTimeout)
-    debounceTimeout = setTimeout(async () => {
-      if (value.trim() === '') {
-        searchResult.value = null
-        isLoadingSearch.value = false
-        return
-      }
-      try {
-        const result = await getPokemonByName(value.trim().toLowerCase())
-        searchResult.value = {
-          ...result,
-          favorite: favoritesStore.isFavorite(result.id),
-        }
-      } catch {
-        searchResult.value = null
-      } finally {
-        isLoadingSearch.value = false
-      }
-    }, 500)
   })
 
   const displayPokemons = computed(() => {
@@ -99,10 +24,6 @@ export function usePokemons() {
       return []
     }
     return pokemons.value
-  })
-
-  const notFound = computed(() => {
-    return search.value.trim() !== '' && !searchResult.value
   })
 
   return {
